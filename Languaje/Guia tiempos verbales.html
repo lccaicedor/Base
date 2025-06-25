@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de Tiempos Verbales para TOEFL ITP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: La aplicación está diseñada como un SPA (Single-Page Application) con una estructura de navegación por pestañas. Este diseño permite a los usuarios enfocarse en un tiempo verbal a la vez sin la distracción de un largo desplazamiento. Cada pestaña revela una sección dedicada que contiene: 1) Usos clave del tiempo verbal, 2) Una sección de 'Estructura Interactiva' donde los usuarios pueden alternar entre formas (afirmativa, negativa, interrogativa) y tipos de verbo (to be, to have, otros) para ver dinámicamente las reglas y ejemplos, y 3) Secciones pedagógicas cruciales sobre 'Adverbios Clave' y 'Errores Comunes para Hispanohablantes'. Esta arquitectura se eligió para transformar el aprendizaje pasivo (leer tablas) en una exploración activa, reforzando la comprensión y retención de las reglas gramaticales complejas, lo cual es vital para el éxito en el TOEFL ITP. -->
+    <!-- Visualization & Content Choices: La información de los PDFs se ha reestructurado para un aprendizaje interactivo. En lugar de tablas estáticas, se utilizan bloques de contenido dinámico controlados por JavaScript. El principal elemento interactivo es el explorador de estructuras. Report Info: Reglas de tiempos verbales, usos y ejemplos. Goal: Facilitar la comprensión y comparación de estructuras gramaticales. Viz/Presentation Method: Botones de alternancia (toggles) que actualizan dinámicamente bloques de texto con las reglas y ejemplos correspondientes. Interaction: El usuario selecciona un tiempo verbal mediante las pestañas de navegación principales. Dentro de esa sección, puede hacer clic en botones para filtrar las estructuras por forma (afirmativa, negativa, interrogativa) y por tipo de verbo. Justification: Este método fomenta el compromiso del usuario y descompone la información compleja en partes manejables, lo que mejora el aprendizaje. Library/Method: Vanilla JavaScript para manejar toda la lógica de la interfaz y la actualización de contenido. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdfcfb; /* Warm Neutral Background */
+            color: #44403c; /* Stone 700 */
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-button.active {
+            border-bottom-color: #0d9488; /* Teal 600 */
+            color: #0d9488; /* Teal 600 */
+            font-weight: 600;
+        }
+        .structure-toggle {
+            transition: all 0.3s ease;
+        }
+        .structure-toggle.active {
+            background-color: #0d9488; /* Teal 600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 1px solid #f5f5f4; /* Stone 100 */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-800">Guía Interactiva de Tiempos Verbales</h1>
+            <p class="mt-3 text-lg text-stone-600">Una herramienta de estudio para el examen <span class="font-semibold text-teal-700">TOEFL ITP</span></p>
+        </header>
+
+        <nav class="mb-8 border-b border-stone-200">
+            <div id="nav-container" class="flex flex-wrap items-center justify-center -mb-px gap-x-6 gap-y-2">
+            </div>
+        </nav>
+
+        <main id="content-area">
+        </main>
+
+        <footer class="text-center mt-12 text-sm text-stone-500">
+            <p>&copy; 2025 Guía de Estudio TOEFL ITP. Creado como herramienta pedagógica.</p>
+        </footer>
+    </div>
+
+    <script>
+        const tenseData = {
+            'presente-simple': {
+                title: 'Presente Simple',
+                uses: [
+                    "Acciones habituales y rutinas: 'We go to walk every two days.'",
+                    "Verdades generales y hechos científicos: 'Water boils at 100°C.'",
+                    "Situaciones o estados permanentes: 'She works in a hospital.'",
+                    "Horarios y programas futuros fijos: 'The train leaves at 8:00 AM.'"
+                ],
+                adverbs: ['always', 'usually', 'often', 'sometimes', 'rarely', 'never', 'every day', 'on Mondays'],
+                errors: [
+                    "Omitir la '-s' o '-es' en la tercera persona del singular (he, she, it): 'He work here.' en lugar de 'He works here.'",
+                    "Usar auxiliares incorrectos en negaciones e preguntas: 'I no live here.' en lugar de 'I don't live here.'",
+                    "Confundirlo con el Presente Continuo para acciones que ocurren en este momento."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + am/is/are + C", example: "She is a doctor." },
+                        toHave: { rule: "Sujeto + have/has + C", example: "They have two children." },
+                        other: { rule: "Sujeto + V1 (+s/es) + C", example: "He plays the guitar." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + am/is/are + not + C", example: "She is not a doctor." },
+                        toHave: { rule: "Sujeto + don't/doesn't + have + C", example: "They don't have two children." },
+                        other: { rule: "Sujeto + don't/doesn't + V1 + C", example: "He doesn't play the guitar." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Am/Is/Are + Sujeto + C?", example: "Is she a doctor?" },
+                        toHave: { rule: "Do/Does + Sujeto + have + C?", example: "Do they have two children?" },
+                        other: { rule: "Do/Does + Sujeto + V1 + C?", example: "Does he play the guitar?" }
+                    }
+                }
+            },
+            'presente-continuo': {
+                title: 'Presente Continuo',
+                uses: [
+                    "Acciones en progreso en el momento de hablar: 'He is eating an apple.'",
+                    "Situaciones temporales o tendencias actuales: 'They are fixing the pipe.'",
+                    "Planes futuros ya confirmados: 'We are throwing a party tonight.'",
+                    "Acciones repetidas que causan molestia (con 'always'): 'He is always losing his keys!'"
+                ],
+                adverbs: ['now', 'at the moment', 'right now', 'currently', 'today', 'this week'],
+                errors: [
+                    "Omitir el verbo auxiliar 'to be': 'She reading a book.' en lugar de 'She is reading a book.'",
+                    "Usar verbos de estado (stative verbs) como 'know', 'want', 'love' en esta forma: 'I am wanting a new car.' es incorrecto."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + am/is/are + being + C", example: "He is being very helpful." },
+                        toHave: { rule: "Sujeto + am/is/are + having + C", example: "She is having a great time." },
+                        other: { rule: "Sujeto + am/is/are + V-ing + C", example: "They are studying for the exam." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + am/is/are + not + being + C", example: "He is not being helpful." },
+                        toHave: { rule: "Sujeto + am/is/are + not + having + C", example: "She is not having a great time." },
+                        other: { rule: "Sujeto + am/is/are + not + V-ing + C", example: "They are not studying for the exam." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Am/Is/Are + Sujeto + being + C?", example: "Is he being helpful?" },
+                        toHave: { rule: "Am/Is/Are + Sujeto + having + C?", example: "Is she having a great time?" },
+                        other: { rule: "Am/Is/Are + Sujeto + V-ing + C?", example: "Are they studying for the exam?" }
+                    }
+                }
+            },
+            'pasado-simple': {
+                title: 'Pasado Simple',
+                uses: [
+                    "Acciones completadas en un tiempo específico del pasado: 'He went to school in Mendoza.'",
+                    "Una serie de acciones completadas en el pasado: 'I woke up, took a shower, and left.'",
+                    "Hábitos o situaciones pasadas que ya no son ciertas: 'She lived in Japan for five years.'"
+                ],
+                adverbs: ['yesterday', 'last week/month/year', 'in 2010', 'five minutes ago', 'the other day'],
+                errors: [
+                    "Usar la forma base del verbo en negaciones e preguntas después de 'did': 'She didn't went.' es incorrecto.",
+                    "Confundirlo con el Presente Perfecto para acciones pasadas sin un tiempo específico.",
+                    "No memorizar los verbos irregulares."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + was/were + C", example: "I was tired yesterday." },
+                        toHave: { rule: "Sujeto + had + C", example: "She had a meeting." },
+                        other: { rule: "Sujeto + V2 (V-ed/irregular) + C", example: "They watched a movie." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + wasn't/weren't + C", example: "I wasn't tired yesterday." },
+                        toHave: { rule: "Sujeto + didn't + have + C", example: "She didn't have a meeting." },
+                        other: { rule: "Sujeto + didn't + V1 + C", example: "They didn't watch a movie." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Was/Were + Sujeto + C?", example: "Were you tired yesterday?" },
+                        toHave: { rule: "Did + Sujeto + have + C?", example: "Did she have a meeting?" },
+                        other: { rule: "Did + Sujeto + V1 + C?", example: "Did they watch a movie?" }
+                    }
+                }
+            },
+            'pasado-continuo': {
+                title: 'Pasado Continuo',
+                uses: [
+                    "Acción en progreso en el pasado interrumpida por otra: 'They were sleeping when the noise woke them up.'",
+                    "Dos acciones ocurriendo simultáneamente en el pasado: 'I was reading while he was cooking.'",
+                    "Para dar contexto o ambientación en una historia: 'The sun was shining and the birds were singing.'"
+                ],
+                adverbs: ['while', 'as', 'when', 'at 8 PM last night'],
+                errors: [
+                    "Confundirlo con el Pasado Simple. El continuo es para la acción de 'fondo' o en progreso, no para la acción que interrumpe.",
+                    "Al igual que en presente, usar verbos de estado en esta forma."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + was/were + being + C", example: "The child was being naughty." },
+                        toHave: { rule: "Sujeto + was/were + having + C", example: "We were having dinner." },
+                        other: { rule: "Sujeto + was/were + V-ing + C", example: "She was working late." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + wasn't/weren't + being + C", example: "The child wasn't being naughty." },
+                        toHave: { rule: "Sujeto + wasn't/weren't + having + C", example: "We weren't having dinner." },
+                        other: { rule: "Sujeto + wasn't/weren't + V-ing + C", example: "She wasn't working late." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Was/Were + Sujeto + being + C?", example: "Was the child being naughty?" },
+                        toHave: { rule: "Was/Were + Sujeto + having + C?", example: "Were you having dinner?" },
+                        other: { rule: "Was/Were + Sujeto + V-ing + C?", example: "Was she working late?" }
+                    }
+                }
+            },
+            'presente-perfecto': {
+                title: 'Presente Perfecto',
+                uses: [
+                    "Acción pasada con resultado en el presente: 'I've lost my keys.' (y ahora no puedo entrar).",
+                    "Acción en un tiempo no específico del pasado o experiencias de vida: 'She has traveled to Asia.'",
+                    "Acción que comenzó en el pasado y continúa hasta ahora (con 'for'/'since'): 'He has been sick for three days.'"
+                ],
+                adverbs: ['already', 'yet', 'just', 'ever', 'never', 'for', 'since', 'recently', 'lately'],
+                errors: [
+                    "Usarlo con marcadores de tiempo pasado específico como 'yesterday' o 'last week'. En esos casos se usa Pasado Simple."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + have/has + been + C", example: "They have been to Paris." },
+                        toHave: { rule: "Sujeto + have/has + had + C", example: "I have had enough." },
+                        other: { rule: "Sujeto + have/has + V3 + C", example: "She has finished her work." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + haven't/hasn't + been + C", example: "They haven't been to Paris." },
+                        toHave: { rule: "Sujeto + haven't/hasn't + had + C", example: "I haven't had enough." },
+                        other: { rule: "Sujeto + haven't/hasn't + V3 + C", example: "She hasn't finished her work." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Have/Has + Sujeto + been + C?", example: "Have they been to Paris?" },
+                        toHave: { rule: "Have/Has + Sujeto + had + C?", example: "Have you had enough?" },
+                        other: { rule: "Have/Has + Sujeto + V3 + C?", example: "Has she finished her work?" }
+                    }
+                }
+            },
+            'pasado-perfecto': {
+                title: 'Pasado Perfecto',
+                uses: [
+                    "Acción que ocurrió ANTES que otra acción en el pasado: 'The train had left when I arrived at the station.'",
+                    "Para explicar la razón o causa de una situación pasada: 'He was tired because he had worked a lot.'",
+                    "En 'reported speech' (estilo indirecto)."
+                ],
+                adverbs: ['before', 'after', 'by the time', 'already', 'just', 'until'],
+                errors: [
+                    "Usarlo cuando no hay una segunda acción pasada de referencia. Si solo hay una acción, se usa el Pasado Simple."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + had + been + C", example: "She had been a teacher before." },
+                        toHave: { rule: "Sujeto + had + had + C", example: "He had had the car for a year." },
+                        other: { rule: "Sujeto + had + V3 + C", example: "They had already eaten." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + hadn't + been + C", example: "She hadn't been a teacher before." },
+                        toHave: { rule: "Sujeto + hadn't + had + C", example: "He hadn't had the car for a year." },
+                        other: { rule: "Sujeto + hadn't + V3 + C", example: "They hadn't eaten yet." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Had + Sujeto + been + C?", example: "Had she been a teacher before?" },
+                        toHave: { rule: "Had + Sujeto + had + C?", example: "Had he had the car for a year?" },
+                        other: { rule: "Had + Sujeto + V3 + C?", example: "Had they already eaten?" }
+                    }
+                }
+            },
+            'futuro-simple': {
+                title: 'Futuro Simple (will / be going to)',
+                uses: [
+                    "Con 'will': decisiones espontáneas, predicciones, promesas: 'I will have the salad.'",
+                    "Con 'be going to': planes e intenciones previas, predicciones con evidencia: 'It's going to rain.' (veo nubes negras).",
+                    "En el TOEFL ITP, el presente simple y continuo se usan a menudo para el futuro (horarios y planes fijos)."
+                ],
+                adverbs: ['tomorrow', 'next week/month/year', 'soon', 'in an hour', 'later'],
+                errors: [
+                    "Confundir cuándo usar 'will' vs. 'be going to'. 'Will' es más para el momento, 'going to' para algo ya planeado."
+                ],
+                structures: {
+                    affirmative: {
+                        toBe: { rule: "Sujeto + will be / am/is/are going to be + C", example: "He will be late. / He is going to be late." },
+                        toHave: { rule: "Sujeto + will have / am/is/are going to have + C", example: "We will have a test. / We are going to have a test." },
+                        other: { rule: "Sujeto + will + V1 / am/is/are going to + V1 + C", example: "I will call you. / I am going to call you." }
+                    },
+                    negative: {
+                        toBe: { rule: "Sujeto + won't be / am/is/are not going to be + C", example: "He won't be late. / He is not going to be late." },
+                        toHave: { rule: "Sujeto + won't have / am/is/are not going to have + C", example: "We won't have a test. / We are not going to have a test." },
+                        other: { rule: "Sujeto + won't + V1 / am/is/are not going to + V1 + C", example: "I won't call you. / I am not going to call you." }
+                    },
+                    interrogative: {
+                        toBe: { rule: "Will + Sujeto + be + C? / Am/Is/Are + Sujeto + going to be + C?", example: "Will he be late? / Is he going to be late?" },
+                        toHave: { rule: "Will + Sujeto + have + C? / Am/Is/Are + Sujeto + going to have + C?", example: "Will we have a test? / Are we going to have a test?" },
+                        other: { rule: "Will + Sujeto + V1 + C? / Am/Is/Are + Sujeto + going to + V1 + C?", example: "Will you call me? / Are you going to call me?" }
+                    }
+                }
+            },
+        };
+
+        const navContainer = document.getElementById('nav-container');
+        const contentArea = document.getElementById('content-area');
+        let currentTense = 'presente-simple';
+        let currentStructure = 'affirmative';
+        let currentVerbType = 'other';
+
+        function renderNav() {
+            navContainer.innerHTML = '';
+            Object.keys(tenseData).forEach(tenseId => {
+                const button = document.createElement('button');
+                button.textContent = tenseData[tenseId].title;
+                button.className = `nav-button text-stone-500 py-3 px-1 text-sm md:text-base font-medium`;
+                if (tenseId === currentTense) {
+                    button.classList.add('active');
+                }
+                button.onclick = () => {
+                    currentTense = tenseId;
+                    render();
+                };
+                navContainer.appendChild(button);
+            });
+        }
+
+        function updateStructureView() {
+            const data = tenseData[currentTense].structures[currentStructure][currentVerbType];
+            document.getElementById('structure-rule').textContent = data.rule;
+            document.getElementById('structure-example').textContent = data.example;
+
+            document.querySelectorAll('.sentence-toggle').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`button[data-structure="${currentStructure}"]`).classList.add('active');
+
+            document.querySelectorAll('.verb-toggle').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`button[data-verb-type="${currentVerbType}"]`).classList.add('active');
+        }
+
+        function renderContent() {
+            const data = tenseData[currentTense];
+            contentArea.innerHTML = `
+                <div class="space-y-12">
+                    <div class="content-card p-6 md:p-8">
+                        <h2 class="text-2xl font-bold text-teal-700 mb-4">Usos Clave</h2>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            ${data.uses.map(use => `<li>${use}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card p-6 md:p-8">
+                        <h2 class="text-2xl font-bold text-teal-700 mb-6">Estructura Interactiva</h2>
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <div class="flex-1 min-w-full sm:min-w-0">
+                                <p class="font-semibold mb-2 text-stone-600">Forma de la Oración:</p>
+                                <div class="flex flex-col sm:flex-row rounded-lg bg-stone-100 p-1 space-y-1 sm:space-y-0 sm:space-x-1">
+                                    <button data-structure="affirmative" class="sentence-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">Afirmativa</button>
+                                    <button data-structure="negative" class="sentence-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">Negativa</button>
+                                    <button data-structure="interrogative" class="sentence-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">Interrogativa</button>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-full sm:min-w-0">
+                                <p class="font-semibold mb-2 text-stone-600">Tipo de Verbo:</p>
+                                <div class="flex flex-col sm:flex-row rounded-lg bg-stone-100 p-1 space-y-1 sm:space-y-0 sm:space-x-1">
+                                    <button data-verb-type="toBe" class="verb-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">To be</button>
+                                    <button data-verb-type="toHave" class="verb-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">To have</button>
+                                    <button data-verb-type="other" class="verb-toggle structure-toggle w-full text-center px-4 py-2 rounded-md text-stone-700 font-medium">Otros Verbos</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 bg-teal-50 border-l-4 border-teal-500 text-teal-900 p-4 rounded-r-lg">
+                            <p class="font-semibold">Estructura:</p>
+                            <p id="structure-rule" class="text-lg font-mono bg-white/50 rounded p-2 mt-1"></p>
+                            <p class="font-semibold mt-3">Ejemplo:</p>
+                            <p id="structure-example" class="text-lg italic bg-white/50 rounded p-2 mt-1"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="content-card p-6">
+                            <h3 class="text-xl font-bold text-teal-700 mb-3">Adverbios y Expresiones Clave</h3>
+                             <div class="flex flex-wrap gap-2">
+                                ${data.adverbs.map(adverb => `<span class="bg-stone-100 text-stone-700 text-sm font-medium px-3 py-1 rounded-full">${adverb}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="content-card p-6">
+                            <h3 class="text-xl font-bold text-red-600 mb-3">Errores Comunes para Hispanohablantes</h3>
+                            <ul class="list-disc list-inside space-y-2 text-stone-700">
+                                ${data.errors.map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.querySelectorAll('.sentence-toggle').forEach(button => {
+                button.onclick = () => {
+                    currentStructure = button.dataset.structure;
+                    updateStructureView();
+                };
+            });
+            document.querySelectorAll('.verb-toggle').forEach(button => {
+                button.onclick = () => {
+                    currentVerbType = button.dataset.verbType;
+                    updateStructureView();
+                };
+            });
+            updateStructureView();
+        }
+        
+        function render() {
+            renderNav();
+            renderContent();
+        }
+
+        document.addEventListener('DOMContentLoaded', render);
+
+    </script>
+</body>
+</html>

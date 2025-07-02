@@ -27,3 +27,5 @@ https://github.com/scitedotai/scite-zotero-plugin
 5. ZoteroPreview (discontinued) (Funcional)
 https://github.com/dcartertod/zotero-plugins
 
+6. Lista de Recursos y Extensiones de Zotero
+https://github.com/MohamedElashri/awesome-zotero

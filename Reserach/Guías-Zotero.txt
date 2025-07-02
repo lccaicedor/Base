@@ -1,1 +1,29 @@
+## Manuales Zotero
+
+Universidad de Berkley
+https://guides.lib.berkeley.edu/zotero
+
+Universidad de Florida
+https://guides.uflib.ufl.edu/zoterocite
+
+
+##Plugins
+
+Listado Oficial de Plugins
+https://www.zotero.org/support/plugins
+
+1. PDF Translate
+https://github.com/windingwind/zotero-pdf-translate
+
+2. PDF Preview
+https://github.com/windingwind/zotero-pdf-preview
+
+3. SciPDF
+Sci-PDF
+
+4. Scite Zotero
+https://github.com/scitedotai/scite-zotero-plugin
+
+5. ZoteroPreview (discontinued) (Funcional)
+https://github.com/dcartertod/zotero-plugins
 
